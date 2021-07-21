@@ -28,6 +28,6 @@ def test_timestamp_embedding_basic():
 def test_scene_embedding_basic():
     model = module.load_model(TEST_WEIGHTS_PATH)
     audio = whitenoise_audio()
-    emb = module.get_timestamp_embeddings(audio=audio, model=model)
+    emb = module.get_scene_embeddings(audio=audio, model=model)
 
 

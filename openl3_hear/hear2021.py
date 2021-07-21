@@ -10,6 +10,7 @@ HOP_SIZE_TIMESTAMPS = 0.050 # <50 ms recommended
 HOP_SIZE_SCENE = 0.5
 
 import openl3
+import numpy
 
 #import tensorflow_datasets
 #from tensorflow_datasets.typing import Tensor
