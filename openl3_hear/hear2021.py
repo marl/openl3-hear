@@ -11,6 +11,7 @@ HOP_SIZE_SCENE = 0.5
 
 import openl3
 import numpy
+import tensorflow as tf
 
 #import tensorflow_datasets
 #from tensorflow_datasets.typing import Tensor
@@ -76,11 +77,13 @@ def get_timestamp_embeddings(
     embeddings = []
     ts = None
     for sound_no in range(audio.shape[0]):
-        samples = audio[sound_no, :]
+        samples = numpy.array(audio[sound_no, :])
         emb, ts = get_embedding(samples)
         embeddings.append(emb)
     emb = numpy.stack(embeddings)
-
+    emb = tf.convert_to_tensor(emb)
+    ts = tf.convert_to_tensor(ts)
+    
     # post-conditions
     assert len(ts.shape) == 1 
     assert len(ts) >= 1
@@ -117,6 +120,7 @@ def get_scene_embeddings(
 
     # FIXME: use TensorFlow Tensor instead. Using tf.constant ?
     scene_embedding = numpy.mean(emb)
+    scene_embedding = tf.convert_to_tensor(scene_embedding)
     return scene_embedding
 
 

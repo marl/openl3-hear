@@ -5,6 +5,7 @@ import math
 
 import openl3_hear as module
 import numpy
+import tensorflow as tf
 import pytest
 
 # TODO
@@ -25,16 +26,19 @@ def whitenoise_audio(sr=16000, duration=1.0, amplitude=1.0):
 def test_timestamp_embedding_basic():
     model = module.load_model(TEST_WEIGHTS_PATH)
     audio = numpy.array([whitenoise_audio(duration=1.5) for i in range(4)])
+    audio = tf.convert_to_tensor(audio)
     emb, ts = module.get_timestamp_embeddings(audio=audio, model=model)
 
 def test_scene_embedding_basic():
     model = module.load_model(TEST_WEIGHTS_PATH)
     audio = numpy.array([whitenoise_audio(duration=1.2) for i in range(3)])
+    audio = tf.convert_to_tensor(audio)
     emb = module.get_scene_embeddings(audio=audio, model=model)
 
 def test_very_short_file():
     model = module.load_model(TEST_WEIGHTS_PATH)
     audio = numpy.array([whitenoise_audio(duration=0.1) for i in range(1)])
+    audio = tf.convert_to_tensor(audio)
     emb = module.get_scene_embeddings(audio=audio, model=model)
 
 @pytest.mark.skip('very slow')
