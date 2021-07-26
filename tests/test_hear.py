@@ -20,14 +20,15 @@ def whitenoise_audio(sr=16000, duration=1.0, amplitude=1.0):
     samples = numpy.random.uniform(low=-amplitude, high=amplitude, size=n_samples)
     return samples
 
+
 def test_timestamp_embedding_basic():
     model = module.load_model(TEST_WEIGHTS_PATH)
-    audio = whitenoise_audio()
+    audio = numpy.array([whitenoise_audio(duration=1.5) for i in range(4)])
     emb, ts = module.get_timestamp_embeddings(audio=audio, model=model)
 
 def test_scene_embedding_basic():
     model = module.load_model(TEST_WEIGHTS_PATH)
-    audio = whitenoise_audio()
+    audio = numpy.array([whitenoise_audio(duration=1.2) for i in range(3)])
     emb = module.get_scene_embeddings(audio=audio, model=model)
 
 

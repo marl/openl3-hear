@@ -3,8 +3,6 @@
 
 Milestone 1. Minimally functional, vanilla
 
-- Create HEAR API skeleton
-- Add basic pytests using the HEAR API
 - Implement the API using OpenL3 in simplest way possible
 Scene embeddings: Average
 - Setup Github Actions running pytest

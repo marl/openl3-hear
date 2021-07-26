@@ -57,10 +57,40 @@ def get_timestamp_embeddings(
         embedding: A float32 Tensor with shape (n_sounds, n_timestamp, model.timestamp_embedding_size).
         timestamps: Tensor. Centered timestamps in milliseconds corresponding to each embedding in the output.
      """
+    assert len(audio.shape) == 2
 
-    emb, ts = openl3.get_audio_embedding(audio, sr=model.sample_rate, model=model.openl3_model, hop_size=hop_size)
+    # for a single audio clip
+    def get_embedding(samples):
+        print(samples.shape)
+        emb, ts = openl3.get_audio_embedding(samples,
+            sr=model.sample_rate,
+            model=model.openl3_model,
+            hop_size=hop_size,
+        )
+
+        return emb, ts
+
+    # Compute embeddings for each clip
+    embeddings = []
+    ts = None
+    for sound_no in range(audio.shape[0]):
+        samples = audio[sound_no, :]
+        emb, ts = get_embedding(samples)
+        print(emb.shape)
+        embeddings.append(emb)
+
+    emb = numpy.stack(embeddings)
+
     # FIXME: check if timestampes are centered
-    return emb, ts
+
+    #print('ts', ts)
+    assert len(ts.shape) == 1 
+    assert emb.shape[0] == audio.shape[0]
+    assert len(emb.shape) == 3, emb.shape
+    assert emb.shape[1] == len(ts), (emb.shape, ts.shape)
+    # assert ts[0] > 0.0 and ts[0] < hop
+    # assert ts[1] == ts[0] + hop
+    return (emb, ts)
 
 
 def get_scene_embeddings(
@@ -77,6 +107,7 @@ def get_scene_embeddings(
 
         embedding: A float32 Tensor with shape (n_sounds, model.scene_embedding_size).
     """
+    assert len(audio.shape) == 2 
 
     emb, ts = get_timestamp_embeddings(audio, model, hop_size=hop_size)
 
