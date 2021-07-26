@@ -57,15 +57,17 @@ def get_timestamp_embeddings(
         embedding: A float32 Tensor with shape (n_sounds, n_timestamp, model.timestamp_embedding_size).
         timestamps: Tensor. Centered timestamps in milliseconds corresponding to each embedding in the output.
      """
+    # pre-conditions
     assert len(audio.shape) == 2
 
-    # for a single audio clip
+    # get embeddings for a single audio clip
     def get_embedding(samples):
-        print(samples.shape)
         emb, ts = openl3.get_audio_embedding(samples,
             sr=model.sample_rate,
             model=model.openl3_model,
             hop_size=hop_size,
+            center=True,
+            verbose=0,
         )
 
         return emb, ts
@@ -76,20 +78,22 @@ def get_timestamp_embeddings(
     for sound_no in range(audio.shape[0]):
         samples = audio[sound_no, :]
         emb, ts = get_embedding(samples)
-        print(emb.shape)
         embeddings.append(emb)
-
     emb = numpy.stack(embeddings)
 
-    # FIXME: check if timestampes are centered
-
-    #print('ts', ts)
+    # post-conditions
     assert len(ts.shape) == 1 
+    assert len(ts) >= 1
     assert emb.shape[0] == audio.shape[0]
     assert len(emb.shape) == 3, emb.shape
     assert emb.shape[1] == len(ts), (emb.shape, ts.shape)
-    # assert ts[0] > 0.0 and ts[0] < hop
-    # assert ts[1] == ts[0] + hop
+    if len(ts) >= 2:
+        assert ts[1] == ts[0] + hop_size
+
+    # XXX: are timestampes centered?
+    # first results seems to be 0.0, which would indicate that window
+    # starts at -window/2 ?
+    #assert ts[0] > 0.0 and ts[0] < hop_size, ts
     return (emb, ts)
 
 

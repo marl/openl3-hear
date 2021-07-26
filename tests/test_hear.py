@@ -5,6 +5,7 @@ import math
 
 import openl3_hear as module
 import numpy
+import pytest
 
 # TODO
 # test maximum length, 20 minutes
@@ -31,4 +32,17 @@ def test_scene_embedding_basic():
     audio = numpy.array([whitenoise_audio(duration=1.2) for i in range(3)])
     emb = module.get_scene_embeddings(audio=audio, model=model)
 
+def test_very_short_file():
+    model = module.load_model(TEST_WEIGHTS_PATH)
+    audio = numpy.array([whitenoise_audio(duration=0.1) for i in range(1)])
+    emb = module.get_scene_embeddings(audio=audio, model=model)
+
+@pytest.mark.skip('very slow')
+def test_very_long_file():
+    # up to 20 minutes can be provided in challenge
+    # note, takes several minutes to process on CPU
+    # but RAM usage seems to be stable at 3-4 GB resident
+    model = module.load_model(TEST_WEIGHTS_PATH)
+    audio = numpy.array([whitenoise_audio(duration=20*60) for i in range(1)])
+    emb = module.get_scene_embeddings(audio=audio, model=model)
 
