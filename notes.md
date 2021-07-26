@@ -3,11 +3,7 @@
 
 Milestone 1. Minimally functional, vanilla
 
-- Implement the API using OpenL3 in simplest way possible
-Scene embeddings: Average
-- Setup Github Actions running pytest
-- Make pip installable
-- Also test pip install in Github Actions
+- Test pip install in Github Actions
 
 # Misc
 ! openl3 on pypi released as 0.4.0 july 2021
