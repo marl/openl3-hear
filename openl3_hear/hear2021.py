@@ -19,8 +19,7 @@ import tensorflow as tf
 from typing import NewType, Tuple
 Tensor = NewType('Tensor', object)
 
-# FIXME: inherit from tf.Module ?
-class Model():
+class Model(tf.Module):
     def __init__(self, model, sample_rate=16000, embedding_size=512):
         self.sample_rate = sample_rate
         self.scene_embedding_size = embedding_size
