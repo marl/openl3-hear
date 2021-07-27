@@ -74,23 +74,27 @@ def get_timestamp_embeddings(
 
     # Compute embeddings for each clip
     embeddings = []
-    ts = None
+    timestamps = []
     for sound_no in range(audio.shape[0]):
         samples = numpy.array(audio[sound_no, :])
         emb, ts = get_embedding(samples)
         embeddings.append(emb)
+        timestamps.append(ts)
     emb = numpy.stack(embeddings)
+    ts = numpy.stack(timestamps)
     emb = tf.convert_to_tensor(emb)
     ts = tf.convert_to_tensor(ts)
     
     # post-conditions
-    assert len(ts.shape) == 1 
+    assert len(ts.shape) == 2 
     assert len(ts) >= 1
     assert emb.shape[0] == audio.shape[0]
     assert len(emb.shape) == 3, emb.shape
-    assert emb.shape[1] == len(ts), (emb.shape, ts.shape)
+    assert ts.shape[0] == audio.shape[0]
+    assert emb.shape[1] == ts.shape[1], (emb.shape, ts.shape)
+    assert emb.shape[2] == model.timestamp_embedding_size
     if len(ts) >= 2:
-        assert ts[1] == ts[0] + hop_size
+        assert ts[0,1] == ts[0,0] + hop_size
 
     # XXX: are timestampes centered?
     # first results seems to be 0.0, which would indicate that window
