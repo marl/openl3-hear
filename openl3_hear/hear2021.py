@@ -119,11 +119,16 @@ def get_scene_embeddings(
     """
     assert len(audio.shape) == 2 
 
-    emb, ts = get_timestamp_embeddings(audio, model, hop_size=hop_size)
+    embeddings, ts = get_timestamp_embeddings(audio, model, hop_size=hop_size)
 
     # FIXME: use TensorFlow Tensor instead. Using tf.constant ?
-    scene_embedding = numpy.mean(emb)
-    scene_embedding = tf.convert_to_tensor(scene_embedding)
-    return scene_embedding
+    emb = numpy.mean(embeddings, axis=1)
+    emb = tf.convert_to_tensor(emb)
+
+    assert len(emb.shape) == 2, emb.shape
+    assert emb.shape[0] == audio.shape[0], (emb.shape, audio.shape)
+    assert emb.shape[1] == model.scene_embedding_size, (emb.shape, audio.shape)
+
+    return emb
 
 

@@ -23,3 +23,12 @@ INFO: pip is looking at multiple versions of cython to determine which version i
 ERROR: Could not find a version that satisfies the requirement scikit-image<0.15.0,>=0.14.3 (from openl3) (from versions: 0.7.2, 0.8.0, 0.8.1, 0.8.2, 0.9.0, 0.9.1, 0.9.3, 0.10.0, 0.10.1, 0.11.2, 0.11.3, 0.12.0, 0.12.1, 0.12.2, 0.12.3, 0.13.0, 0.13.1, 0.14.0, 0.14.1, 0.14.2, 0.14.3, 0.14.5, 0.15.0, 0.16.2, 0.17.1, 0.17.2, 0.18.0rc0, 0.18.0rc1, 0.18.0rc2, 0.18.0, 0.18.1, 0.18.2rc1, 0.18.2rc2, 0.18.2)
 ERROR: No matching distribution found for scikit-image<0.15.0,>=0.14.3
 
+
+hear-validator
+
+Could be useful to log where module was loaded from
+module.__file__
+
+timestamps should have same first dim as audio input vector (and embeddings).
+Not clear in docs
+
