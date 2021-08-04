@@ -3,7 +3,9 @@
 
 Milestone 1. Minimally functional, vanilla
 
-- Test pip install in Github Actions
+- Run performance evaluation using
+https://github.com/neuralaudio/hear-eval-kit/
+
 
 # Misc
 ! openl3 on pypi released as 0.4.0 july 2021
