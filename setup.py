@@ -31,7 +31,6 @@ setup(
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     packages=['openl3_hear'],
-    # FIXME: re-enable when no-longer using git version of openl3
-    #install_requires=read_requirements(),
+    install_requires=read_requirements(),
     zip_safe=True,
 )
