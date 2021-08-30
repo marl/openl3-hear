@@ -20,7 +20,7 @@ from typing import NewType, Tuple
 Tensor = NewType('Tensor', object)
 
 class Model(tf.Module):
-    def __init__(self, model, sample_rate=16000, embedding_size=512):
+    def __init__(self, model, sample_rate=48000, embedding_size=512):
         self.sample_rate = sample_rate
         self.scene_embedding_size = embedding_size
         self.timestamp_embedding_size = embedding_size
