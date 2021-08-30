@@ -26,6 +26,7 @@ jobs:
           pip install flake8 pytest
       - name: Install as pip package
         run: |
+          pip install -r requirements.txt
           pip install . # also handles requirements
       - name: Lint with flake8
         run: |
