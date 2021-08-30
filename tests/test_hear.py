@@ -17,7 +17,7 @@ import pytest
 
 TEST_WEIGHTS_PATH = 'unused'
 
-def whitenoise_audio(sr=16000, duration=1.0, amplitude=1.0):
+def whitenoise_audio(sr=48000, duration=1.0, amplitude=1.0):
     n_samples = math.ceil(sr * duration)
     samples = numpy.random.uniform(low=-amplitude, high=amplitude, size=n_samples)
     return samples

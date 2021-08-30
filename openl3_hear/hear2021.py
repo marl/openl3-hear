@@ -9,8 +9,11 @@ https://neuralaudio.ai/hear2021-holistic-evaluation-of-audio-representations.htm
 HOP_SIZE_TIMESTAMPS = 0.050 # <50 ms recommended
 HOP_SIZE_SCENE = 0.5
 
+import time
+
 import openl3
 import numpy
+import structlog
 import tensorflow as tf
 
 #import tensorflow_datasets
@@ -19,8 +22,11 @@ import tensorflow as tf
 from typing import NewType, Tuple
 Tensor = NewType('Tensor', object)
 
+log = structlog.get_logger()
+
+
 class Model(tf.Module):
-    def __init__(self, model, sample_rate=16000, embedding_size=512):
+    def __init__(self, model, sample_rate=48000, embedding_size=512):
         self.sample_rate = sample_rate
         self.scene_embedding_size = embedding_size
         self.timestamp_embedding_size = embedding_size
@@ -75,16 +81,27 @@ def get_timestamp_embeddings(
     # Compute embeddings for each clip
     embeddings = []
     timestamps = []
+
+    # convert to Numpy
+    pre_convert_start = time.time()
+    samples = numpy.array(audio)
+    pre_convert_end = time.time()
+
+    compute_start = time.time()
     for sound_no in range(audio.shape[0]):
-        samples = numpy.array(audio[sound_no, :])
-        emb, ts = get_embedding(samples)
+        emb, ts = get_embedding(samples[sound_no, :])
         embeddings.append(emb)
         timestamps.append(ts)
+    compute_end = time.time()
+
+    # convert to Tensorflow
+    post_convert_start = time.time()
     emb = numpy.stack(embeddings)
     ts = numpy.stack(timestamps)
     emb = tf.convert_to_tensor(emb)
     ts = tf.convert_to_tensor(ts)
-    
+    post_convert_end = time.time()
+
     # post-conditions
     assert len(ts.shape) == 2 
     assert len(ts) >= 1
@@ -95,6 +112,14 @@ def get_timestamp_embeddings(
     assert emb.shape[2] == model.timestamp_embedding_size
     if len(ts) >= 2:
         assert ts[0,1] == ts[0,0] + hop_size
+
+    log.debug('get-timestamp-embeddings',
+        n_samples=audio.shape[0],
+        sample_length=audio.shape[1]/model.sample_rate,
+        pre_convert_duration=pre_convert_end-pre_convert_start,
+        post_convert_duration=post_convert_end-post_convert_start,
+        compute_duration=compute_end-compute_start,
+    )
 
     # XXX: are timestampes centered?
     # first results seems to be 0.0, which would indicate that window
