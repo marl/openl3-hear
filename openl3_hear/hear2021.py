@@ -91,7 +91,7 @@ def get_timestamp_embeddings(
     for sound_no in range(audio.shape[0]):
         emb, ts = get_embedding(samples[sound_no, :])
         embeddings.append(emb)
-        timestamps.append(ts)
+        timestamps.append(ts * 1000.0) # HEAR timestamps are in milliseconds
     compute_end = time.time()
 
     # convert to Tensorflow
@@ -111,7 +111,7 @@ def get_timestamp_embeddings(
     assert emb.shape[1] == ts.shape[1], (emb.shape, ts.shape)
     assert emb.shape[2] == model.timestamp_embedding_size
     if len(ts) >= 2:
-        assert ts[0,1] == ts[0,0] + hop_size
+        assert ts[0,1] == ts[0,0] + (hop_size*1000.0)
 
     log.debug('get-timestamp-embeddings',
         n_samples=audio.shape[0],
