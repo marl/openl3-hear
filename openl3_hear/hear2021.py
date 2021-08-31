@@ -87,10 +87,22 @@ def get_timestamp_embeddings(
     samples = numpy.array(audio)
     pre_convert_end = time.time()
 
+    input_sample_length = audio.shape[1]/model.sample_rate
+
+    # pad audio with silence
+    # ensures that events at end of input can be caught
+    pad_samples = int(((1.0/2.0)-hop_size) * model.sample_rate)
+    samples = numpy.pad(samples,
+            pad_width=[(0, 0), (0, pad_samples)],
+            mode='constant', constant_values=0,
+    )
+
     compute_start = time.time()
     for sound_no in range(audio.shape[0]):
         emb, ts = get_embedding(samples[sound_no, :])
         embeddings.append(emb)
+        # HEAR timestamps are in milliseconds
+        ts = ts * 1000.0
         timestamps.append(ts)
     compute_end = time.time()
 
@@ -111,20 +123,19 @@ def get_timestamp_embeddings(
     assert emb.shape[1] == ts.shape[1], (emb.shape, ts.shape)
     assert emb.shape[2] == model.timestamp_embedding_size
     if len(ts) >= 2:
-        assert ts[0,1] == ts[0,0] + hop_size
+        assert ts[0,0] >= 0.0, ts
+        assert ts[0,-1] <= (input_sample_length*1000.0), ts
+        assert ts[0,1] == ts[0,0] + (hop_size*1000.0), ts
+
 
     log.debug('get-timestamp-embeddings',
         n_samples=audio.shape[0],
-        sample_length=audio.shape[1]/model.sample_rate,
+        sample_length=input_sample_length,
         pre_convert_duration=pre_convert_end-pre_convert_start,
         post_convert_duration=post_convert_end-post_convert_start,
         compute_duration=compute_end-compute_start,
     )
 
-    # XXX: are timestampes centered?
-    # first results seems to be 0.0, which would indicate that window
-    # starts at -window/2 ?
-    #assert ts[0] > 0.0 and ts[0] < hop_size, ts
     return (emb, ts)
 
 
