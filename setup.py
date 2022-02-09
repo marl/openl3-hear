@@ -31,6 +31,6 @@ setup(
     long_description=read_readme(),
     long_description_content_type="text/markdown",
     packages=['openl3_hear'],
-    install_requires=read_requirements(),
+    #install_requires=read_requirements(),
     zip_safe=True,
 )
